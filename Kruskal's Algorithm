@@ -28,11 +28,6 @@ int main()
         int x=u, v=0;
         while(set[x] > 0)
             x = set[x];
-        while(u!=x) {
-            v=set[u];
-            set[u]=x;
-            u=v;
-        }
         return x;
     }
 
