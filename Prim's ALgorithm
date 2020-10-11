@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define I 32767
+int cost[9][9]={{I,I,I,I,I,I,I,I,I},
+                {I,I,14,10,I,5,6,I,I},
+                {I,14,I,3,I,I,I,I,I},
+                {I,10,3,I,8,I,I,I,I},
+                {I,I,I,8,I,2,I,I,15},
+                {I,5,I,I,2,I,4,9,I},
+                {I,6,I,I,I,4,I,I,I},
+                {I,I,I,I,I,9,I,I,I},
+                {I,I,I,I,15,I,I,I,I}};
+int t[2][7];
+int near[9]={I,I,I,I,I,I,I,I,I};
+
+void main()
+{
+    int i,j,k,u,v, min=I;
+    /* this loop is for identifying first minimum edge from the matrix */
+    for(i=1; i <= 8; i++) {
+        for(j=i; j <= 8; j++) {
+            if(cost[i][j] < min) {
+                min=cost[i][j];
+                u=i; v=j;
+            }
+        }
+    }
+    
+    /* storing the vertices for the first minimum edge that we got */
+    
+    t[0][0]=u;
+    t[1][0]=v;
+    
+    /* marking the first two vertices as 0 in the near array which is initialized as infinity before */
+    
+    near[u]=near[v]=0;
+    
+    /* this loop is for finding the distance of the rest of the vertices from 'u' & 'v' that we got */
+    
+    for(i=1; i<=8; i++) {
+        if(near[i]!=0)
+        {
+            if(cost[i][u] < cost[i][v])
+            near[i]=u;
+        else
+            near[i]=v;
+        }
+    }
+    
+    /* REPEAT STARTS */
+   
+    /* this loop is for extracting the minimum cost edge vertices from the near array */
+    /* also mark the the recieved vertice as k to perform further operation */
+        
+    for(i=1; i < 8-1; i++){
+        min=I;
+        for(j=1; j<=8; j++){
+            if(near[j]!=0 && cost[j][near[j]] < min) {
+                min=cost[j][near[j]];
+                k=j;
+            }
+        }
+        
+        /* marking the vertices 'k' & 'near[k]' to the t[]  & marking near[k]=0 */
+            t[0][i]=k;
+            t[1][i]=near[k];
+            near[k]=0;
+            
+        /* this loop finds the costs of remaining(vertices which are not included in soltuion yet) vertices which the 'k' vertex that we got just now */
+            for(j=1; j<=8; j++) {
+                if(near[j]!=0 && cost[j][k] < cost[j][near[j]])
+                    near[j]=k;
+            }
+    }
+    
+    /* REPEAT ENDS */
+    
+    /* loop for printing the solution array */
+    for(i=0; i<2; i++) {
+        for(j=0; j<8-1; j++)
+            printf("%d ", t[i][j]);
+        printf("\n");
+    }
+}
