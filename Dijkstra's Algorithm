@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define I 32767
+#define v 7
+
+/* defining 2D array for the cost of edges */
+
+int cost[7][7]={{I,I,I,I,I,I,I},
+                {I,I,4,4,I,I,I},
+                {I,4,I,2,I,I,I},
+                {I,4,2,I,1,3,6},
+                {I,I,I,1,I,I,3},
+                {I,I,I,3,I,I,2},
+                {I,I,I,6,3,2,I}};
+int visited[7]={0};
+int distance[7]={};
+int t[7];
+
+
+
+void dijkatra(int arr[v][v], int start) {
+    int i, newnode, min, j=97, count;  /* here j will be used in the printing of the solution set */
+
+    /* this loop records the distance of all the vertices from the start vertice that we will be choosing */
+    for(i=1; i < v; i++)
+        distance[i] = cost[i][start];
+
+    /* mark the start vertice as visited by marking it as '1' & mark the distance of start vertice from start as '0' */
+
+    distance[start] = 0;
+    visited[start] = 1;
+    count=1;  /* starting the count as we need to go on until we get initial number of vertices in the solution set */
+
+    while(count < v-1) {
+        min=I;
+
+        /* this loop extracts the minimum distance from the distance array & record it's corresponding vertice as newnode */
+        /* newnode is the next vertice that we will be visiitng in order to reach the destination */
+
+        for(i=1; i < 7; i++){
+            if(!visited[i] && distance[i] < min) {
+                min = distance[i];
+                newnode = i;
+                }
+        }
+            visited[newnode] = 1; /* marking the newnode as visited since we have included this in our solution set */
+
+        /* this loop updates the distance[] with the distance of all the unvisited vertices to the newnode that we just received */
+
+        for(i=1; i<7; i++) {
+            if(!visited[i])
+                if(min + cost[i][newnode] < distance[i])
+                    distance[i] = min + cost[i][newnode];
+        }
+        count++; /* incrementing the count in order to record the next vertice in our solution set */
+    }
+
+    /* this loop is for printing the solution set
+        it records the total distance travelled from source to the destination */
+
+    for(i=1; i<v; i++) {
+        if(i!=start)
+            printf("Distance from source %c to destination %c is: %d\n", j-i+1, j, distance[i]);
+        j++;
+}
+}
+void main()
+{
+    /* in this graph, vertices a=1, b=2, c=3, d=4, e=5, f=6
+        & the cost[][] contains the edge weight/cost for our graph */
+    dijkatra(cost, 1);
+}
