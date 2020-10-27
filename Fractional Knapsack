@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void swap(int *x, int *y) {
+    int temp;
+        temp=*x;
+        *x=*y;
+        *y=temp;
+}
+
+float knapsack(float ratio[], float profit[], float weight[], int size, float totalWeight) {
+    float max_profit=0,current_weight=0, remain;
+    int i=0;
+    while(current_weight<totalWeight) {
+    /* the if part considers the whole part of the objects which can be added to the solution & adds its corresponding profit to max_profit */
+    
+        if(current_weight + weight[i] <= totalWeight) {
+           current_weight += weight[i];
+           max_profit += profit[i];
+
+        }
+        /* the else part finds the remaining fraction part of weight & profit that is to be added to the max_profit */
+        
+        else {
+            remain = totalWeight - current_weight;
+            max_profit += profit[i] * (remain/weight[i]);
+            break;
+        }
+        i++;
+    }
+    return max_profit;
+}
+
+
+int main()
+{
+    int n,i,j;
+    float W,temp;
+    printf("Enter the total number of objects: ");
+    scanf("%d", &n);
+    float *profit=(float *)malloc(n*sizeof(float));
+    float *weight=(float *)malloc(n*sizeof(float));
+    float *ratio=(float *)malloc(n*sizeof(float));
+    printf("Enter the Knapsack capacity ");
+    scanf("%f", &W);
+    printf("Enter the profit-weight pairs for each object");
+    for(i=0; i<n; i++) {
+        scanf("%f %f", &profit[i], &weight[i]);
+        ratio[i]=profit[i] / weight[i];
+}
+
+/* this loop sorts all the three array according to the decreasing value of profit/weight value ratio */
+
+ for(i=0; i<n; i++)
+ {
+    for(j=i+1;j< n; j++)
+    {
+      if(ratio[i]<ratio[j])
+      {
+      swap(&ratio[i], &ratio[j]);
+
+      swap(&weight[j], &weight[i]);
+
+      swap(&profit[j], &profit[i]);
+     }
+   }
+ }
+ printf("Profit Array for all objects\n");
+ for(i=0;i<n;i++) {
+        printf("%f ", profit[i]);
+    }
+    printf("Weight array for all objects");
+    printf("\n");
+    for(i=0;i<n;i++) {
+        printf("%f ", weight[i]);
+    }
+    printf("Profit/Weight value array for all objects");
+    printf("\n");
+    for(i=0;i<n;i++) {
+        printf("%f ", ratio[i]);
+    }
+
+    printf("\n%f ", knapsack(ratio,profit,weight,n,W));
+}
