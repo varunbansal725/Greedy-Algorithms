@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void swap(int *x, int *y) {
+    int temp;
+    temp=*x;
+    *x=*y;
+    *y=temp;
+}
+
+void sort_in_decrease(int arr[], int size) {
+    int i,j;
+    for(i=0; i<size-1; i++)
+        for(j=i+1; j<size; j++)
+            if(arr[i] < arr[j])
+                swap(&arr[i], &arr[j]);
+}
+
+void minimum_number_of_coins(int arr[], int size, int amount) {
+    int i,k=0;
+
+    /* initialize te result array to be large array because repitions of a single value coin is allowed */
+    int *result=(int *)malloc(50*sizeof(int));
+    /* sort the coin value array in decreasing order because we want to minimise the no. of coins */
+    sort_in_decrease(arr, size);
+
+    /* iterate through the coin array once */
+
+    for(i=0; i<size; i++) {
+
+     /* for each iteration of coins[i], we repitetively check for our result array by comparing
+        the coin value to the remaining amount & adding it to solution array */
+
+        while(arr[i] <= amount) {
+            amount -= arr[i];
+            result[k++] = arr[i];
+        }
+    }
+    /* here we get the result[] & also the minimum no. of coins are received to make up the amount i.e. 'k' */
+    /* printing the result */
+    for(i=0; i<k; i++)
+        printf("%d ", result[i]);
+}
+
+
+void main()
+{
+    int i,x,y,z;
+    printf("Enter the total number of coin denominations: ");
+    scanf("%d", &y);
+    int *coins=(int *)malloc(y*sizeof(int));;
+    printf("\nEnter the coins denominations: ");
+    for(i=0; i<y; i++)
+        scanf("%d", &coins[i]);
+    printf("Enter the total amount");
+    scanf("%d", &z);
+    minimum_number_of_coins(coins, y, z);
+}
