@@ -71,7 +71,6 @@ void insert(struct minHeap *minHeap, struct heapNode *heapNode) {
 struct minHeap * create_build_minheap(char data[], unsigned freq[], int size) {
     int i,n;
     struct minHeap *minHeap=(struct minHeap *)malloc(sizeof(struct minHeap));
-    minHeap->size=0;
     minHeap->capacity=size;
     minHeap->array=(struct heapNode **)malloc(minHeap->size*sizeof(struct heapNode*));
     for(i=0; i<size; i++)
