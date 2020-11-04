@@ -1,0 +1,131 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct heapNode {
+    char data;
+    unsigned frequency;
+    struct heapNode *left;
+    struct heapNode *right;
+};
+
+struct minHeap {
+    int size;
+    int capacity;
+    struct heapNode **array;
+};
+
+struct heapNode * newnode(char data, unsigned frequency) {
+    struct heapNode *temp=(struct heapNode *)malloc(sizeof(struct heapNode));
+    temp->left=temp->right=NULL;
+    temp->data=data;
+    temp->frequency=frequency;
+    return temp;
+}
+
+void swap(struct heapNode **a, struct heapNode **b) {
+    struct heapNode *temp=*a;
+    *a=*b;
+    *b=temp;
+}
+
+
+void minHeapify(struct minHeap *minHeap, int index) {
+    int left, right, smallest;
+    smallest=index;
+    left=2*index+1;
+    right=2*index+2;
+    if(left < minHeap->size && minHeap->array[left]->frequency < minHeap->array[smallest]->frequency)
+        smallest=left;
+    if(right < minHeap->size && minHeap->array[right]->frequency < minHeap->array[smallest]->frequency)
+        smallest=right;
+    if(smallest!=index) {
+        swap(&minHeap->array[smallest], &minHeap->array[index]);
+        minHeapify(minHeap, smallest);
+    }
+}
+
+void printArr(int arr[], int size) {
+    for(int i=0; i<size; i++)
+        printf("%d", arr[i]);
+    printf("\n");
+}
+
+struct heapNode * extractMin(struct minHeap *minHeap) {
+    struct heapNode *temp = minHeap->array[0];
+    minHeap->array[0] = minHeap->array[minHeap->size-1];
+    minHeap->size--;
+    minHeapify(minHeap, 0);
+    return temp;
+}
+
+void insert(struct minHeap *minHeap, struct heapNode *heapNode) {
+    minHeap->size++;
+    int i=minHeap->size-1;
+    while(i && minHeap->array[i]->frequency < minHeap->array[i/2]->frequency) {
+        minHeap->array[i] = minHeap->array[i/2];
+        i=i/2;
+    }
+    minHeap->array[i]=heapNode;
+}
+
+struct minHeap * create_build_minheap(char data[], unsigned freq[], int size) {
+    int i,n;
+    struct minHeap *minHeap=(struct minHeap *)malloc(sizeof(struct minHeap));
+    minHeap->size=0;
+    minHeap->capacity=size;
+    minHeap->array=(struct heapNode **)malloc(minHeap->size*sizeof(struct heapNode*));
+    for(i=0; i<size; i++)
+        minHeap->array[i] = newnode(data[i], freq[i]);
+    minHeap->size=size;
+    for(i=minHeap->size/2-1; i>=0; i--)
+        minHeapify(minHeap, i);
+
+    return minHeap;
+}
+
+struct minHeap * huffman_build_tree(char data[], unsigned freq[], int size) {
+    struct minHeap *minHeap=create_build_minheap(data, freq, size);
+    struct heapNode *left, *right, *top;
+    while(minHeap->size!=1) {
+        left=extractMin(minHeap);
+        right=extractMin(minHeap);
+        top=newnode('$', left->frequency+right->frequency);
+        top->left=left;
+        top->right=right;
+    insert(minHeap, top);
+    }
+    return extractMin(minHeap);
+}
+
+void printCodes(struct heapNode *root, int arr[], int top) {
+    if(root->left) {
+        arr[top]=0;
+        printCodes(root->left, arr, top+1);
+    }
+    if(root->right) {
+        arr[top]=1;
+        printCodes(root->right, arr, top+1);
+    }
+    if(root->left==NULL && root->right==NULL) {
+        printf("%c ", root->data);
+        printArr(arr, top);
+        }
+}
+
+void Huffman_codes(char data[], unsigned freq[], int size) {
+    struct heapNode *root = huffman_build_tree(data, freq, size);
+    int arr_of_max_heapHeight[100], top=0;
+    printCodes(root, arr_of_max_heapHeight, top);
+}
+
+
+void main()
+{
+    char arr[] = { 'a', 'b', 'c', 'd', 'e', 'f' };
+    unsigned freq[] = { 11, 8, 19, 6, 76, 45 };
+
+    int size = sizeof(arr) / sizeof(arr[0]);
+
+    Huffman_codes(arr, freq, size);
+
+}
