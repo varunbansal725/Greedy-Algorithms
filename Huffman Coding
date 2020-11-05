@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+
+/* a structure for the node of the heap */
 struct heapNode {
     char data;
     unsigned frequency;
@@ -8,12 +11,15 @@ struct heapNode {
     struct heapNode *right;
 };
 
+/* a structure for the tree that would be formed by huffman coding */
 struct minHeap {
     int size;
     int capacity;
     struct heapNode **array;
 };
 
+
+/* a fucntion for the creation of a new node */
 struct heapNode * newnode(char data, unsigned frequency) {
     struct heapNode *temp=(struct heapNode *)malloc(sizeof(struct heapNode));
     temp->left=temp->right=NULL;
@@ -21,7 +27,7 @@ struct heapNode * newnode(char data, unsigned frequency) {
     temp->frequency=frequency;
     return temp;
 }
-
+/* for swapping the two heap nodes present in the array */
 void swap(struct heapNode **a, struct heapNode **b) {
     struct heapNode *temp=*a;
     *a=*b;
@@ -29,6 +35,7 @@ void swap(struct heapNode **a, struct heapNode **b) {
 }
 
 
+/* heapify function to create a minimum heap */
 void minHeapify(struct minHeap *minHeap, int index) {
     int left, right, smallest;
     smallest=index;
@@ -44,12 +51,16 @@ void minHeapify(struct minHeap *minHeap, int index) {
     }
 }
 
+
+/* a function to print the array */
 void printArr(int arr[], int size) {
     for(int i=0; i<size; i++)
         printf("%d", arr[i]);
     printf("\n");
 }
 
+
+/* a function to extract the minimum value node i.e. the root of the minimum heap & then again heapifying it in order to again make it a minimum heap */
 struct heapNode * extractMin(struct minHeap *minHeap) {
     struct heapNode *temp = minHeap->array[0];
     minHeap->array[0] = minHeap->array[minHeap->size-1];
@@ -58,6 +69,7 @@ struct heapNode * extractMin(struct minHeap *minHeap) {
     return temp;
 }
 
+/* a function to insert a node to the end of the heap and then adjusting it according to it's value in the minimum heap */
 void insert(struct minHeap *minHeap, struct heapNode *heapNode) {
     minHeap->size++;
     int i=minHeap->size-1;
@@ -68,6 +80,8 @@ void insert(struct minHeap *minHeap, struct heapNode *heapNode) {
     minHeap->array[i]=heapNode;
 }
 
+/* this function creates and builds a minimum heap */
+/* creation means defining the memory and its structure & building means to arrange the existing heap into a minimum heap */
 struct minHeap * create_build_minheap(char data[], unsigned freq[], int size) {
     int i,n;
     struct minHeap *minHeap=(struct minHeap *)malloc(sizeof(struct minHeap));
@@ -82,6 +96,9 @@ struct minHeap * create_build_minheap(char data[], unsigned freq[], int size) {
     return minHeap;
 }
 
+
+/* this function first creates & builds a minimum heap. then it performs optimal merge until the heap reduces to size 1.
+    after the heap becomes of size=1, we return that single node because that is the root node of the resultant optimal merge alorithm */
 struct minHeap * huffman_build_tree(char data[], unsigned freq[], int size) {
     struct minHeap *minHeap=create_build_minheap(data, freq, size);
     struct heapNode *left, *right, *top;
@@ -96,6 +113,7 @@ struct minHeap * huffman_build_tree(char data[], unsigned freq[], int size) {
     return extractMin(minHeap);
 }
 
+/* this function prints the codes by calling itself recursively */
 void printCodes(struct heapNode *root, int arr[], int top) {
     if(root->left) {
         arr[top]=0;
@@ -111,6 +129,7 @@ void printCodes(struct heapNode *root, int arr[], int top) {
         }
 }
 
+/* this is the main function which is called to perform huffman coding */
 void Huffman_codes(char data[], unsigned freq[], int size) {
     struct heapNode *root = huffman_build_tree(data, freq, size);
     int arr_of_max_heapHeight[100], top=0;
@@ -120,6 +139,8 @@ void Huffman_codes(char data[], unsigned freq[], int size) {
 
 void main()
 {
+
+    
     char arr[] = { 'a', 'b', 'c', 'd', 'e', 'f' };
     unsigned freq[] = { 11, 8, 19, 6, 76, 45 };
 
